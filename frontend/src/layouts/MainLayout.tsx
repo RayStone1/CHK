@@ -2,114 +2,120 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { Outlet } from "react-router-dom";
-// import { MemoryRouter, Route, Routes, Link, matchPath, useLocation } from "react-router-dom";
-interface Props {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
-    window?: () => Window;
-}
 
-const drawerWidth = 240;
-const navItems = [
-    { name: "Home", to: "" },
-    { name: "About", to: "" },
-    { name: "Contact", to: "" },
-];
+import { Outlet, useNavigate } from "react-router-dom";
+import { Container, ThemeProvider, createTheme } from "@mui/material";
 
-const MainLayout = (props: Props) => {
-    const { window } = props;
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+const MainLayout = () => {
+    const navigate = useNavigate();
+    const theme = createTheme({
+        palette: {
+            primary: {
+                main: "#0052cc",
+            },
+            secondary: {
+                main: "#edf2ff",
+            },
+        },
+        spacing: 4,
+        typography: {
+            h5: {
+                fontWeight: "bold",
+            },
+            h6: {
+                fontWeight: "bold",
+            },
+        },
+        components: {
+            MuiCard: {
+                styleOverrides: {
+                    root: {
+                        borderRadius: 16,
+                        boxShadow: "none",
+                        "&:last-child": {
+                            paddingBottom: 0,
+                        },
+                    },
+                },
+            },
 
-    const handleDrawerToggle = () => {
-        setMobileOpen((prevState) => !prevState);
-    };
-
-    const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
-                MUI
-            </Typography>
-            <Divider />
-            <List>
-                {navItems.map((item) => (
-                    <ListItem key={item.name} disablePadding>
-                        <ListItemButton sx={{ textAlign: "center" }}>
-                            <ListItemText primary={item.name} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </Box>
-    );
-
-    const container = window !== undefined ? () => window().document.body : undefined;
-
+            MuiCardContent: {
+                styleOverrides: {
+                    root: {
+                        "&:last-child": {
+                            paddingBottom: "none", // Убираем padding bottom для последнего дочернего элемента
+                        },
+                    },
+                },
+            },
+            MuiAccordionSummary: {
+                styleOverrides: {
+                    root: {
+                        margin: 0,
+                        "&.Mui-expanded": {
+                            margin: 0,
+                        },
+                    },
+                    content: {
+                        margin: 0,
+                        "&.Mui-expanded": {
+                            margin: 0,
+                        },
+                    },
+                },
+            },
+            MuiAccordionDetails: {
+                styleOverrides: {
+                    root: {
+                        borderRadius: 16,
+                    },
+                },
+            },
+            MuiAccordion: {
+                styleOverrides: {
+                    root: {
+                        borderRadius: 16,
+                        boxShadow: "none",
+                    },
+                },
+            },
+        },
+    });
     return (
-        <Box sx={{ display: "flex" }}>
-            <CssBaseline />
-            <AppBar component="nav">
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        edge="start"
-                        onClick={handleDrawerToggle}
-                        sx={{ mr: 2, display: { sm: "none" } }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-                    >
-                        MUI
-                    </Typography>
-                    <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                        {navItems.map((item) => (
-                            <Button key={item.name} sx={{ color: "#fff" }}>
-                                {item.name}
-                            </Button>
-                        ))}
-                    </Box>
-                </Toolbar>
-            </AppBar>
-            <nav>
-                <Drawer
-                    container={container}
-                    variant="temporary"
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                    ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
-                    }}
-                    sx={{
-                        display: { xs: "block", sm: "none" },
-                        "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-                    }}
+        <ThemeProvider theme={theme}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    minHeight: "100vh",
+                    bgcolor: "#f2f3f7",
+                }}
+            >
+                <CssBaseline />
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography variant="h6" onClick={() => navigate("/")}>
+                            Header
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <Box component="main" sx={{ flex: 1, py: 3 }}>
+                    <Container maxWidth="xl">
+                        <Outlet />
+                    </Container>
+                </Box>
+                <Box
+                    component="footer"
+                    sx={{ py: 3, textAlign: "center", bgcolor: "background.paper" }}
                 >
-                    {drawer}
-                </Drawer>
-            </nav>
-            <Box component="main" sx={{ p: 3 }}>
-                <Toolbar />
-                <Outlet />
+                    <Container>
+                        <Typography variant="body1">Footer</Typography>
+                    </Container>
+                </Box>
             </Box>
-        </Box>
+        </ThemeProvider>
     );
 };
 
